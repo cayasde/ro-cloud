@@ -50,6 +50,11 @@ local function login(cookie: string?): session
 		cookie = get_local_cookie()
 	end
 	assert(cookie, `couldnt possible login`)
+	
+	if not cookie:find("^%.ROBLOSECURITY=") then
+		cookie = `.ROBLOSECURITY={cookie}`
+	end
+	
 	return table.freeze { cookie = cookie }
 end
 
