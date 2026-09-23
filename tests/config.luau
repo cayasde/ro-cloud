@@ -4,8 +4,8 @@ local env = require '@utils/env'
 local api_key = env.str 'API_KEY'
 local cookie = env.str 'COOKIE'
 
-if not api_key then warn 'missing API_KEY env var' end
-if not cookie then warn 'missing COOKIE env var' end
+if not api_key then print('missing API_KEY env var') end
+if not cookie then print('missing COOKIE env var') end
 
 return table.freeze {
 	session = api_key and cloud.auth.apikey.login(api_key),

@@ -2,10 +2,10 @@ local auth = require '@lib/auth'
 local env = require '@utils/env'
 local oauth = require '@lib/auth/oauth'
 
-local fs = require '@lune/fs'
-local net = require '@lune/net'
-local serde = require '@lune/serde'
-local task = require '@lune/task'
+local fs = require '@std/fs'
+local net = require '@lute/net'
+local json = require '@std/json'
+local task = require '@std/task'
 
 -- config
 local CLIENT_ID = env.str 'CLIENT_ID' or error 'CLIENT_ID not found'
@@ -18,11 +18,11 @@ local SCOPES = {
 
 -- functions
 local function load_session(): oauth.session?
-	return fs.isFile 'session.json' and serde.decode('json', fs.readFile 'session.json')
+	return fs.isFile 'session.json' and json.deserialize(fs.readFile 'session.json')
 end
 local function save_session(session: oauth.session?)
 	if session then
-		fs.writeFile('session.json', serde.encode('json', session, true))
+		fs.writeFile('session.json', json.serialize(session))
 	else
 		fs.removeFile 'session.json'
 	end
@@ -78,7 +78,7 @@ local function try_refresh_session(session: oauth.session): oauth.session?
 end
 local function maybe_fresh_session(session: oauth.session): oauth.session?
 	if oauth.is_session_expired(session) then
-		warn 'Session expired, refreshing...'
+		print('Session expired, refreshing...')
 		return try_refresh_session(session)
 	end
 

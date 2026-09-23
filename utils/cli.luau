@@ -1,4 +1,4 @@
-local process = require '@lune/process'
+local process = require '@std/process'
 
 local options: { [string]: string } = {}
 local flags: { [string]: boolean } = {}

@@ -1,5 +1,5 @@
 local env = require '@utils/env'
-local process = require '@lune/process'
+local process = require '@std/process'
 local runner = require './runner'
 
 local config = {
@@ -37,7 +37,18 @@ local suites = {
 
 for _, entry in suites do
 	print(`\n[{entry.name}]`)
-	entry.suite.run(config, runner)
+	local suite = entry.suite
+	local run_funcs = type(suite.run) == "table" and suite.run or suite
+	for name, fn in run_funcs do
+		if type(fn) == "function" and name ~= "run" and name ~= "skip" and name ~= "focus" then
+			runner.test(name, fn)
+		end
+	end
+	if type(suite.skip) == "table" then
+		for name, _ in suite.skip do
+			runner.skip(name, "Skipped by spec")
+		end
+	end
 end
 
 local p, f, s = runner.summary()

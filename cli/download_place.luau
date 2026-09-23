@@ -1,7 +1,7 @@
 local cli = require '@utils/cli'
 local cloud = require '@lib'
 local env = require '@utils/env'
-local fs = require '@lune/fs'
+local fs = require '@std/fs'
 
 assert(cli.str(1) == 'place', `no command '{cli.str(1)}' found\navailable commands: 'place'`)
 assert(cli.str(2) == 'download', `no sub-command '{cli.str(2)}' found\navailable sub commands: 'download'`)

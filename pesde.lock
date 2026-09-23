@@ -4,10 +4,3 @@ format = 2
 name = "ernisto/ro_cloud"
 version = "0.1.0-alpha.5"
 target = "lune"
-
-[graph."synpixel/base64@3.0.1 lune"]
-direct = ["base64", { name = "synpixel/base64", version = "^3.0.1", index = "default" }, "standard"]
-
-[graph."synpixel/base64@3.0.1 lune".pkg_ref]
-ref_ty = "pesde"
-index_url = "https://github.com/pesde-pkg/index"

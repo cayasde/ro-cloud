@@ -31,5 +31,5 @@ function run.get_group_universes()
 	assert(res.ok and type(res.body.data) == 'table', 'expected data.data to be a table')
 end
 
-if not session then warn(`COOKIE required for develop.spec tests`) end
+if not session then print(`COOKIE required for develop.spec tests`) end
 return if session then { run = run, skip = skip, focus = focus } else { run = {}, skip = run, focus = focus }

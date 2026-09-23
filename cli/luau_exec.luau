@@ -1,11 +1,15 @@
-local fs = require '@lune/fs'
-local stdio = require '@lune/stdio'
-local task = require '@lune/task'
+local fs = require '@std/fs'
+local task = require '@std/task'
 
 local cli = require '@utils/cli'
 local cloud = require '@lib'
 local env = require '@utils/env'
-local process = require '@lune/process'
+local process = require '@std/process'
+
+local COLOR_RED = "\27[31m"
+local COLOR_YELLOW = "\27[33m"
+local COLOR_RESET = "\27[0m"
+local STYLE_DIM = "\27[2m"
 
 -- cli
 assert(cli.str(1) == 'luau', `no command '{cli.str(1)}'\navailable commands: 'luau'`)
@@ -28,7 +32,7 @@ local last_state
 -- functions
 local function core_log(msg: string)
 	if focus then return end
-	stdio.write(stdio.style 'dim' .. msg .. stdio.style 'reset' .. '\n')
+	print(STYLE_DIM .. msg .. COLOR_RESET .. '\n')
 end
 local function poll_for_completion(session, task_identity)
 	while true do
@@ -36,9 +40,9 @@ local function poll_for_completion(session, task_identity)
 
 		local res = cloud.luau_task_exec.get(session, task_identity)
 		if res.code == 404 then
-			error(`{stdio.color 'yellow'}failed to poll task ({res.code}): {res.message}{stdio.color 'reset'}`)
+			error(`{COLOR_YELLOW}failed to poll task ({res.code}): {res.message}{COLOR_RESET}`)
 		elseif not res.ok then
-			print(`{stdio.color 'yellow'}failed to poll task ({res.code}): {res.message}{stdio.color 'reset'}`)
+			print(`{COLOR_YELLOW}failed to poll task ({res.code}): {res.message}{COLOR_RESET}`)
 			continue
 		end
 
@@ -54,7 +58,7 @@ end
 local function fetch_new_logs(session, task_identity)
 	local log_res = cloud.luau_task_exec.list_logs(session, task_identity, { view = 'FLAT', max_page_size = 10_000 })
 	if not log_res.ok then
-		error(`{stdio.color 'red'}failed to fetch log page ({log_res.code}): {log_res.message}{stdio.color 'reset'}`)
+		error(`{COLOR_RED}failed to fetch log page ({log_res.code}): {log_res.message}{COLOR_RESET}`)
 	end
 
 	for _, log in log_res.body.luauExecutionSessionTaskLogs do
@@ -72,7 +76,7 @@ core_log(`Creating task... `)
 local create_res = cloud.luau_task_exec.create(session, identity, { script = script_content, timeout = timeout })
 
 if not create_res.ok then
-	print(`{stdio.color 'red'}Failed to create task ({create_res.code}): {create_res.message}{stdio.color 'reset'}`)
+	print(`{COLOR_RED}Failed to create task ({create_res.code}): {create_res.message}{COLOR_RESET}`)
 	return process.exit(1)
 end
 local pending_task = create_res.body
@@ -85,6 +89,6 @@ fetch_new_logs(session, completed_task)
 if completed_task.state == 'FAILED' then
 	local err = completed_task.error
 
-	print(`{stdio.color 'red'}[{err.code}] {err.message or ''}{stdio.color 'reset'}\n`)
+	print(`{COLOR_RED}[{err.code}] {err.message or ''}{COLOR_RESET}\n`)
 	return process.exit(1)
 end
