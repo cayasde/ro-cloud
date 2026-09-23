@@ -3,4 +3,4 @@
 format = 2
 name = "ernisto/ro_cloud"
 version = "0.1.0-alpha.5"
-target = "lune"
+target = "luau"

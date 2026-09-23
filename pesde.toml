@@ -16,7 +16,7 @@ includes = [
 ]
 
 [target]
-environment = "lute"
+environment = "luau"
 lib = "lib/init.luau"
 bin = "cli/init.luau"
 
